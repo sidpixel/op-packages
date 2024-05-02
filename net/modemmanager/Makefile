@@ -8,12 +8,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=modemmanager
-PKG_SOURCE_VERSION:=1.18.6
+PKG_SOURCE_VERSION:=1.18.12
 PKG_RELEASE:=$(AUTORELEASE)
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://gitlab.freedesktop.org/mobile-broadband/ModemManager.git
-PKG_MIRROR_HASH:=72f1a865153745d05c482ed3a77f2045d24387f1f9a37177fe7bc35ab7663765
+PKG_MIRROR_HASH:=5a32f90fc58345e2136f4196166a7a2b95a804a6b92adf1bfb5b7a1173a5b1a0
 
 PKG_MAINTAINER:=Nicholas Smith <nicholas@nbembedded.com>
 PKG_LICENSE:=GPL-2.0-or-later
@@ -100,6 +100,9 @@ define Package/modemmanager/install
 	$(CP) $(PKG_INSTALL_DIR)/usr/lib/ModemManager/libmm-shared-*.so* $(1)/usr/lib/ModemManager
 	$(CP) $(PKG_INSTALL_DIR)/usr/lib/ModemManager/libmm-plugin-*.so* $(1)/usr/lib/ModemManager
 
+	$(INSTALL_DIR) $(1)/usr/lib/ModemManager/connection.d
+	$(INSTALL_BIN) ./files/10-report-down $(1)/usr/lib/ModemManager/connection.d
+
 	$(INSTALL_DIR) $(1)/etc/dbus-1/system.d
 	$(INSTALL_CONF) $(PKG_INSTALL_DIR)/etc/dbus-1/system.d/org.freedesktop.ModemManager1.conf $(1)/etc/dbus-1/system.d
 
@@ -109,6 +112,9 @@ define Package/modemmanager/install
 	$(INSTALL_DIR) $(1)/usr/share/ModemManager
 	$(INSTALL_DATA) $(PKG_INSTALL_DIR)/usr/share/ModemManager/*.conf $(1)/usr/share/ModemManager
 	$(INSTALL_DATA) ./files/modemmanager.common $(1)/usr/share/ModemManager
+
+	$(INSTALL_DIR) $(1)/usr/share/ModemManager/fcc-unlock.available.d
+	$(INSTALL_DATA) $(PKG_INSTALL_DIR)/usr/share/ModemManager/fcc-unlock.available.d/* $(1)/usr/share/ModemManager/fcc-unlock.available.d
 
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_BIN) ./files/modemmanager.init $(1)/etc/init.d/modemmanager
